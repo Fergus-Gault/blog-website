@@ -2,7 +2,7 @@
 
 {% block header %}
   <h1>{% block title %}{{post['title']}}{% endblock %}</h1>
-  <div class="about">By {{ post['username'] }} - {{ post['created'].strftime('%d/%m/%y') }}</div>
+  <div class="about">By <a href="{{ url_for('blog.profile', username=post['username']) }}">{{ post['username'] }}</a> - {{ post['created'].strftime('%d/%m/%y') }}</div>
 {% endblock %}
 
 {% block content %}
@@ -48,7 +48,7 @@
           </div>
         </div>
       {% endif %}
-    <div class="about">By {{ comment['username'] }} - {{ comment['created'].strftime('%d/%m/%y') }}</div>
+    <div class="about">By <a href="{{ url_for('blog.profile', username=comment['username']) }}">{{ comment['username'] }}</a> - {{ comment['created'].strftime('%d/%m/%y') }}</div>
     <div>{{ comment['body'] }}</div>
     <br>
     {% endfor %}

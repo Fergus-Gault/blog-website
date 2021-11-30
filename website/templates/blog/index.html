@@ -24,7 +24,7 @@
             </div>
             {% endif %}
           <h2><a href="{{ url_for('blog.viewPost', id=post['id']) }}">{{ post['title'] }}</a></h2>
-          <div class="about">By {{ post['username'] }} - {{ post['created'].strftime('%d/%m/%y') }}</div>
+          <div class="about">By <a href="{{ url_for('blog.profile', username=post['username']) }}">{{ post['username'] }}</a> - {{ post['created'].strftime('%d/%m/%y') }}</div>
         </div>
       </header>
       <p class="body">{{ post['body'] }}</p>
