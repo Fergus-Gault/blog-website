@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, session
+    Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
 
@@ -56,23 +56,6 @@ def get_post(id, check_author=True):
 
     return post
 
-def get_comment(id, check_author=True):
-    comment = get_db().execute(
-    'SELECT c.id, p.id, c.post_id, c.body, c.created, c.author_id, u.username'
-    ' FROM comment c JOIN user u ON c.author_id = u.id'
-    ' JOIN post p ON p.id = c.post_id'
-    ' WHERE p.id = ?',
-    (id,)
-    ).fetchone()
-
-    if comment is None:
-        abort(404, f"Comment id {id} doesn't exist.")
-    
-    if check_author and comment['author_id'] != g.user['id']:
-        abort(403)
-
-    return comment
-
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
@@ -117,10 +100,8 @@ def delete(id):
 
 
 @bp.route('/user/<username>')
-@login_required
 def profile(username):
     db = get_db()
-    username = g.user['username']
     posts = db.execute(
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
@@ -128,7 +109,7 @@ def profile(username):
         ' ORDER BY created DESC'
         ,(username,)).fetchall()
 
-    return render_template('blog/profile.html', posts=posts)
+    return render_template('blog/profile.html', posts=posts, username=username)
 
 
 @bp.route('/<int:id>', methods=('POST', 'GET',))
