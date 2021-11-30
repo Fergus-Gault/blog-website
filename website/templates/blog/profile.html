@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ g.user['username'] }}{% endblock %}</h1>
+  {% if g.user %}
+  <br>
+  <form action="{{ url_for('blog.create') }}">
+    <button type="submit" class="btn btn-primary">New Post</button>  
+  </form>
+  {% endif %}
+{% endblock %}
+{% block content %}
+  {% for post in posts %}
+    <article class="post">
+      <header>
+        <div>
+          {% if g.user['id'] == post['author_id'] %}
+          <div class="dropdown dropleft" id="dropdown">
+            <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+            </div>
+          </div>
+          <h2><a href="{{ url_for('blog.viewPost', id=post['id']) }}">{{ post['title'] }}</a></h2>
+          <div class="about">By {{ post['username'] }} - {{ post['created'].strftime('%d/%m/%y') }}</div>
+        </div>
+        {% endif %}
+      </header>
+      <p class="body">{{ post['body'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+  <br>
+  <form action="{{ url_for('auth.logout') }}">
+    <button type="submit" class="btn btn-warning">Logout</button>  
+  </form>
+{% endblock %}

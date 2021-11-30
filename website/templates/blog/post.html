@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{post['title']}}{% endblock %}</h1>
+  <div class="about">By {{ post['username'] }} - {{ post['created'].strftime('%d/%m/%y') }}</div>
+{% endblock %}
+
+{% block content %}
+
+<article class="post">
+    <header>
+      <div>
+        {% if g.user['id'] == post['author_id'] %}
+          <div class="dropdown dropleft" id="dropdown">
+            <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+            </div>
+          </div>
+          {% endif %}
+      </div>
+    </header>
+    <p class="body">{{ post['body'] }}</p>
+
+    <hr>
+    <h4>Comments</h4>
+    {% if g.user %}
+    <form method="POST">
+      <div class="form-group">
+          <textarea name="content" placeholder="Add comment..."
+                    class="form-control"></textarea>
+      </div>
+      <div class="form-group">
+          <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+  </form>
+  {% endif %}
+    {% for comment in comments %}
+      {% if g.user['id'] == comment['author_id'] %}
+        <div class="dropdown dropleft" id="dropdown">
+          <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{{ url_for('blog.deleteComment', commID=comment['commentID'], postID=post['id']) }}">Delete</a>
+          </div>
+        </div>
+      {% endif %}
+    <div class="about">By {{ comment['username'] }} - {{ comment['created'].strftime('%d/%m/%y') }}</div>
+    <div>{{ comment['body'] }}</div>
+    <br>
+    {% endfor %}
+  </article>
+
+
+
+{% endblock %}

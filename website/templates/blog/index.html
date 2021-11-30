@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Posts{% endblock %}</h1>
+  {% if g.user %}
+  <form action="{{ url_for('blog.create') }}">
+    <button type="submit" class="btn btn-primary">New Post</button>  
+  </form>
+  {% endif %}
+{% endblock %}
+{% block content %}
+  {% for post in posts %}
+    <article class="post">
+      <header>
+        <div>
+          {% if g.user['id'] == post['author_id'] %}
+            <div class="dropdown dropleft" id="dropdown">
+              <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+              </div>
+            </div>
+            {% endif %}
+          <h2><a href="{{ url_for('blog.viewPost', id=post['id']) }}">{{ post['title'] }}</a></h2>
+          <div class="about">By {{ post['username'] }} - {{ post['created'].strftime('%d/%m/%y') }}</div>
+        </div>
+      </header>
+      <p class="body">{{ post['body'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

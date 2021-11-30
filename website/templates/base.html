@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<title>{% block title %}{% endblock %} - Website</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<nav class="navbar navbar-inverse navbar-expand-md navbar-light bg-light" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{{ url_for('index')}}"><img src="/static/assets/logo.png" alt="Logo" width="30" height="30"></a>
+          </div>
+        <ul class="navbar-nav navbar-right me-auto mb-0 mc-lg-0">
+            {% if g.user %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('blog.profile', username=g.user['username']) }}"><img src="/static/assets/defaultpfp.png" height="30" width="30"></a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+<br>
+<div class="container">
+    {% block header %}{% endblock %}
+    <hr>
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    {% block content %} {% endblock %}
+</div>
+<script type="text/javascript" src="/static/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
