@@ -13,7 +13,7 @@
     <article class="post">
       <header>
         <div>
-          {% if g.user['id'] == post['author_id'] %}
+          {% if g.user['id'] == post['author_id'] or g.user['admin'] == 1 %}
             <div class="dropdown dropleft" id="dropdown">
               <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
