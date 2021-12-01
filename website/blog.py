@@ -53,14 +53,14 @@ def get_post(id, check_author=True):
     ).fetchone()
 
     if post is None:
-        abort(404, f"Post id {id} doesn't exist.")
+        abort(404, f"Post was not found.")
     
     if check_author and post['author_id'] != g.user['id']:
         abort(403)
 
     return post
 
-@bp.route('/<string:id>/update', methods=('GET', 'POST'))
+@bp.route('/post/<string:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
     post = get_post(id)
@@ -106,6 +106,11 @@ def delete(id):
 @bp.route('/user/<username>')
 def profile(username):
     db = get_db()
+
+    checkUser = db.execute('SELECT username FROM user WHERE username = ?', (username,)).fetchone()
+    if checkUser is None:
+        abort(404, f"Username doesn't exist.")
+
     posts = db.execute(
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
@@ -116,7 +121,7 @@ def profile(username):
     return render_template('blog/profile.html', posts=posts, username=username)
 
 
-@bp.route('/<string:id>', methods=('POST', 'GET',))
+@bp.route('/post/<string:id>', methods=('POST', 'GET',))
 def viewPost(id):
     #SELECTS INFO FOR POST
     get_post(id, check_author=False) # Gets the post but doesn't check for author so anyone can view
