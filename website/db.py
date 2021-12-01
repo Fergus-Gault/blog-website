@@ -1,4 +1,7 @@
 import sqlite3
+from sqlite3.dbapi2 import register_adapter
+
+import shortuuid
 
 import click
 from flask import current_app, g
@@ -6,6 +9,7 @@ from flask.cli import with_appcontext
 
 def get_db():
     if 'db' not in g:
+        sqlite3.register_adapter(shortuuid.uuid, lambda u :u.bytes_le)
         g.db = sqlite3.connect(
             current_app.config['DATABASE'],
             detect_types=sqlite3.PARSE_DECLTYPES
