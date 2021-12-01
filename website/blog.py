@@ -1,25 +1,29 @@
+# IMPORTS
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
+
+import shortuuid
+
 from werkzeug.exceptions import abort
 
-from website.auth import login, login_required
+from website.auth import load_logged_in_user, login, login_required
 from website.db import get_db
 
 bp = Blueprint('blog', __name__)
 
-@bp.route('/')
+@bp.route('/') # Creates a route in the base directory for the index page
 def index():
     db = get_db()
     posts = db.execute(
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
-    ).fetchall()
-    return render_template('blog/index.html', posts=posts)
+    ).fetchall() # Selects all data from the 'post' table
+    return render_template('blog/index.html', posts=posts) # Renders the page
 
-@bp.route('/create', methods=('GET', 'POST'))
-@login_required
+@bp.route('/create', methods=('GET', 'POST')) # Creates route 
+@login_required # Requires login to create post
 def create():
     if request.method == 'POST':
         title = request.form['title']
@@ -33,8 +37,8 @@ def create():
 
         else:
             db = get_db()
-            db.execute('INSERT INTO post (title, body, author_id) VALUES (?,?,?)',
-                        (title, body, g.user['id']))
+            db.execute('INSERT INTO post (id, title, body, author_id) VALUES (?,?,?,?)',
+                        (shortuuid.uuid(), title, body, g.user['id']))
             db.commit()
             return redirect(url_for('blog.index'))
 
@@ -56,7 +60,7 @@ def get_post(id, check_author=True):
 
     return post
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@bp.route('/<string:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
     post = get_post(id)
@@ -84,7 +88,7 @@ def update(id):
     
     return render_template('blog/update.html', post=post)
 
-@bp.route('/<int:id>/delete', methods=("POST",))
+@bp.route('/<string:id>/delete', methods=("POST",))
 @login_required
 def delete(id):
     get_post(id)
@@ -112,7 +116,7 @@ def profile(username):
     return render_template('blog/profile.html', posts=posts, username=username)
 
 
-@bp.route('/<int:id>', methods=('POST', 'GET',))
+@bp.route('/<string:id>', methods=('POST', 'GET',))
 def viewPost(id):
     #SELECTS INFO FOR POST
     get_post(id, check_author=False) # Gets the post but doesn't check for author so anyone can view
@@ -137,9 +141,9 @@ def viewPost(id):
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO comment (body, author_id, post_id)'
-                ' VALUES (?,?,?)',
-                (body, g.user['id'], id,)
+                'INSERT INTO comment (commentID, body, author_id, post_id)'
+                ' VALUES (?,?,?,?)',
+                (shortuuid.uuid(), body, g.user['id'], id,) # Inserts the content of the comment, the id of the author, and the id of the post that the comment is on.
             )
             db.commit()
 
@@ -155,7 +159,8 @@ def viewPost(id):
     return render_template('blog/post.html', post=post, comments=comments)
 
 
-@bp.route('/<int:postID>/<int:commID>/deleteComment', methods=('POST', 'GET',))
+@bp.route('/<string:postID>/<string:commID>/deleteComment')
+@login_required
 def deleteComment(commID, postID):
     db = get_db()
     db.execute(
