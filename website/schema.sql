@@ -5,7 +5,10 @@ DROP TABLE IF EXISTS comment;
 CREATE TABLE user (
     id BIGINT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    admin BIT NOT NULL DEFAULT 0,
+    emailConfirmed BIT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE post (
