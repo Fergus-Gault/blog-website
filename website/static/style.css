@@ -12,3 +12,54 @@
 #dropdown {
     float:right;
 }
+
+#favButton {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    float: right;
+}
+
+.hidden {
+    display: none;
+}
+
+.post {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 5px;
+    overflow: auto;
+    word-break: break-word;
+    line-height: 21px;
+}
+
+.viewPost {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fcfcfc;
+    padding: 20px;
+    border-radius: 5px;
+    overflow: auto;
+    word-break: break-word;
+    line-height: 21px;
+}
+
+.comment {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    border-radius: 5px;
+    overflow: auto;
+    word-break: break-word;
+    line-height: 21px;
+}
+
+/* USE SASS | BASICALLY REWORK ENTIRE LAYOUT AND STYILE*/
