@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{{ username }}{% endblock %}</h1>
+  <div>
+    <h1>{% block title %}{{ username }}{% endblock %}</h1>
+    {% if g.user['username'] == username %}
+    <form id="logout" action="{{ url_for('auth.logout') }}">
+      <button type="submit" class="btn btn-warning">Logout</button>  
+    </form>
+    {% endif %}
+  </div>
+
   {% if g.user['username'] == username %}
   <br>
   <form action="{{ url_for('blog.create') }}">
@@ -35,9 +43,5 @@
     {% endif %}
   {% endfor %}
   <br>
-  {% if g.user['username'] == username %}
-  <form action="{{ url_for('auth.logout') }}">
-    <button type="submit" class="btn btn-warning">Logout</button>  
-  </form>
-  {% endif %}
+
 {% endblock %}
