@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS favourite;
 
 CREATE TABLE user (
     id BIGINT PRIMARY KEY,
@@ -17,6 +18,7 @@ CREATE TABLE post (
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title TEXT NOT NULL,
     body TEXT NOT NULL,
+    favourite BIT NOT NULL DEFAULT 0,
     FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
@@ -26,6 +28,14 @@ CREATE TABLE comment (
     author_id INTEGER NOT NULL,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     body TEXT NOT NULL,
+    FOREIGN KEY (author_id) REFERENCES user (id)
+    FOREIGN KEY (post_id) REFERENCES post (id)
+);
+
+CREATE TABLE favourite (
+    id BIGINT PRIMARY KEY,
+    post_id INTEGER NOT NULL,
+    author_id INTEGER NOT NULL,
     FOREIGN KEY (author_id) REFERENCES user (id)
     FOREIGN KEY (post_id) REFERENCES post (id)
 );
