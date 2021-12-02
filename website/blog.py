@@ -46,7 +46,7 @@ def create():
 
 def get_post(id, check_author=True):
     post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, favourite'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = ?',
         (id,)
@@ -112,7 +112,7 @@ def profile(username):
         abort(404, f"Username doesn't exist.")
 
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, favourite'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE username = ?'
         ' ORDER BY created DESC'
@@ -127,7 +127,7 @@ def viewPost(id):
     get_post(id, check_author=False) # Gets the post but doesn't check for author so anyone can view
     db = get_db() # Gets database
     post = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, favourite'
         ' FROM post p JOIN user u ON p.author_id = u.id' 
         ' WHERE p.id=?', (id,)
     ).fetchone() # Fetches one result
@@ -148,16 +148,15 @@ def viewPost(id):
             db.execute(
                 'INSERT INTO comment (commentID, body, author_id, post_id)'
                 ' VALUES (?,?,?,?)',
-                (shortuuid.uuid(), body, g.user['id'], id,) # Inserts the content of the comment, the id of the author, and the id of the post that the comment is on.
-            )
+                (shortuuid.uuid(), body, g.user['id'], id,)
+                # Inserts the content of the comment, the id of the author, and the id of the post that the comment is on.
+                )
             db.commit()
 
     comments = db.execute(
-        'SELECT p.id, c.commentID, c.post_id, c.body, c.created, c.author_id, u.username'
+        'SELECT c.commentID, c.post_id, c.body, c.created, c.author_id, u.username'
         ' FROM comment c JOIN user u ON c.author_id = u.id'
-        ' JOIN post p ON p.id = c.post_id'
-        ' WHERE p.id = ?'
-        ' ORDER BY c.created DESC',
+        ' WHERE c.post_id = (SELECT id FROM post p WHERE p.id = ?)',
         (id,)).fetchall()
 
 
@@ -173,3 +172,41 @@ def deleteComment(commID, postID):
     )
     db.commit()
     return redirect(url_for('blog.viewPost', id=postID))
+
+
+@bp.route('/post/<string:id>/addFavourite', methods=('POST', 'GET',))
+@login_required
+def addFavourite(id):
+    db = get_db()
+    if request.method == "POST":
+        db.execute(
+            'INSERT INTO favourite (id, post_id, author_id)' 
+            ' VALUES (?,?,?)',
+            (shortuuid.uuid(), id, g.user['id'],)
+            )
+        db.execute(
+            'UPDATE post SET favourite=1'
+        )
+        db.commit()
+        flash('Post added to favourites.', 'message')
+    
+    return redirect(url_for('blog.viewPost', id=id))
+
+
+@bp.route('/post/<string:id>/removeFavourite', methods=('POST', 'GET',))
+@login_required
+def removeFavourite(id):
+    db = get_db()
+    if request.method == "POST":
+        db.execute(
+            'DELETE FROM favourite WHERE id=?',(id,)
+        )
+        db.execute(
+            'UPDATE post SET favourite=0'
+        )
+        db.commit()
+        flash('Post removed from favourites.', 'error')
+
+    return redirect(url_for('blog.viewPost', id=id))
+
+
