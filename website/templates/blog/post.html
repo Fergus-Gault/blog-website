@@ -1,13 +1,28 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{{post['title']}}{% endblock %}</h1>
-  <div class="about">By <a href="{{ url_for('blog.profile', username=post['username']) }}">{{ post['username'] }}</a> - {{ post['created'].strftime('%d/%m/%y') }}</div>
-{% endblock %}
+  <h1>
+    {% block title %}{{post['title']}}{% endblock %}
+    <div class="favourite">
 
+      {% if post['favourite']|int == 1 %}
+        <form method="POST" action="{{ url_for('blog.removeFavourite', id=post['id']) }}">
+          <button id="favButton" type="submit" class="btn btn-primary"><img src="/static/assets/heart-fill.svg" width="30" height="30"></button>  
+        </form>
+      {% elif post['favourite']|int == 0 %}
+        <form method="POST" action="{{ url_for('blog.addFavourite', id=post['id']) }}">
+          <button id="favButton" type="submit" class="btn btn-primary"><img src="/static/assets/heart.svg" width="30" height="30"></button>  
+        </form>
+      {% endif %}
+  
+  </div>
+  </h1>
+  <div class="about">By <a href="{{ url_for('blog.profile', username=post['username']) }}">{{ post['username'] }}</a> - {{ post['created'].strftime('%d/%m/%y') }}</div>
+
+{% endblock %}
 {% block content %}
 
-<article class="post">
+<article class="viewPost">
     <header>
       <div>
         {% if g.user['id'] == post['author_id'] or g.user['admin'] == 1 %}
@@ -23,7 +38,7 @@
       </div>
     </header>
     <p class="body">{{ post['body'] }}</p>
-
+    </article>
     <hr>
     <h4>Comments</h4>
     {% if g.user %}
@@ -37,6 +52,7 @@
       </div>
   </form>
   {% endif %}
+  <div class="comment">
     {% for comment in comments %}
       {% if g.user['id'] == comment['author_id'] or g.user['admin'] == 1 %}
         <div class="dropdown dropleft" id="dropdown">
@@ -52,8 +68,7 @@
     <div>{{ comment['body'] }}</div>
     <br>
     {% endfor %}
-  </article>
-
+    </div>
 
 
 {% endblock %}
