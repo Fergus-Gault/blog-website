@@ -1,20 +1,51 @@
 <!DOCTYPE html>
-<title>{% block title %}{% endblock %} - Website</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<nav class="navbar navbar-inverse navbar-expand-md navbar-light bg-light" role="navigation">
+<title>
+    {% block title %}{% endblock %} - Website
+    </title>
+
+<link rel="stylesheet" 
+      href="{{ url_for('static', filename='style.css') }}">
+
+<link rel="stylesheet" 
+      href="/static/bootstrap/css/bootstrap.min.css" 
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+      crossorigin="anonymous">
+
+<nav class="navbar navbar-inverse navbar-expand-md navbar-light bg-light" 
+     role="navigation">
+
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="{{ url_for('index')}}"><img src="/static/assets/logo.svg" alt="Logo" width="30" height="30"></a>
+            <a class="navbar-brand" 
+               href="{{ url_for('index')}}">
+
+               <img src="/static/assets/logo.svg" 
+                    alt="Logo" 
+                    width="30" 
+                    height="30">
+                    
+                </a>
           </div>
         <ul class="navbar-nav navbar-right me-auto mb-0 mc-lg-0">
             {% if g.user %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('blog.profile', username=g.user['username']) }}"><img src="/static/assets/person-circle.svg" height="30" width="30"></a>
+                    <a class="nav-link"
+                       href="{{ url_for('blog.profile', id=g.user['id']) }}">
+
+                       <img src="/static/assets/person-circle.svg" 
+                            height="30" 
+                            width="30">
+
+                        </a>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="nav-link" 
+                       href="{{ url_for('auth.login') }}">
+
+                       Login
+                    
+                    </a>
                 </li>
             {% endif %}
         </ul>
@@ -27,9 +58,23 @@
     {% with errors = get_flashed_messages(category_filter=['error']) %}
         {% if errors %}
             {% for message in errors %}
-                <div id="alert" class="alert alert-danger alert-dismissible fade show" role="alert">{{ message }}<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button></div>
+                <div id="alert" 
+                     class="alert alert-danger alert-dismissible fade show"
+                      role="alert">
+
+                      {{ message }}
+                      
+                      <button type="button" 
+                              class="close" 
+                              data-dismiss="alert" 
+                              aria-label="Close">
+
+                    <span aria-hidden="true">
+                        &times;
+                    </span>
+
+                  </button>
+                </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
@@ -37,14 +82,31 @@
     {% with success = get_flashed_messages(category_filter=['message']) %}
         {% if success %}
             {% for message in success %}
-                <div id="alert" class="alert alert-success alert-dismissible fade show" role="alert">{{ message }}<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button></div>
+                <div id="alert" 
+                     class="alert alert-success alert-dismissible fade show" 
+                     role="alert">
+
+                     {{ message }}
+
+                     <button type="button" 
+                             class="close" 
+                             data-dismiss="alert" 
+                             aria-label="Close">
+
+                    <span aria-hidden="true">
+                        &times;
+                    </span>
+
+                  </button>
+                </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
 
     {% block content %} {% endblock %}
 </div>
-<script type="text/javascript" src="/static/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" 
+        src="/static/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript" 
+        src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
