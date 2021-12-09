@@ -3,45 +3,212 @@
 {% block header %}
   <div>
     <h1>{% block title %}{{ username }}{% endblock %}</h1>
-    {% if g.user['username'] == username %}
-    <form id="logout" action="{{ url_for('auth.logout') }}">
-      <button type="submit" class="btn btn-warning">Logout</button>  
+  </div>
+
+{% endblock %}
+{% block content %}
+
+<ul class="nav nav-tabs">
+  <li class="nav-item active">
+    <a class="nav-link active" 
+       data-toggle="tab" 
+       href="#posts" 
+       aria-selected="true">
+       Posts
+      </a>
+    </li>
+
+  {% if g.user['id'] == id %}
+
+  <li class="nav-item">
+    <a class="nav-link" 
+       data-toggle="tab" 
+       href="#favourites">
+       Favourites
+      </a>
+    </li>
+  <li class="nav-item">
+    <a class="nav-link" 
+       data-toggle="tab" 
+       href="#profile">
+       Profile
+      </a>
+    </li>
+
+  {% endif %}
+
+</ul>
+
+<div class="tab-content">
+
+  <div id="posts" 
+       class="tab-pane fade-in active">
+
+    {% if g.user['id'] == id %}
+
+  <br>
+  <form action="{{ url_for('blog.create') }}">
+
+    <button type="submit" 
+            class="btn btn-primary">
+            New Post
+      </button> 
+
     </form>
+
+  {% endif %}
+  
+  <br>
+  {% for post in posts %}
+  
+  <article class="post">
+    <header>
+      <div>
+
+        {% if g.user['id'] == post['author_id'] or g.user['admin'] == 1 %}
+
+        <div class="dropdown dropleft" 
+             id="dropdown">
+
+          <button class="btn" 
+                  type="button" 
+                  id="dropdownMenuButton" 
+                  data-toggle="dropdown" 
+                  aria-haspopup="true" 
+                  aria-expanded="false">
+
+            <img src="/static/assets/three-dots-vertical.svg" 
+                 alt="3 dots">
+
+            </button>
+
+          <div class="dropdown-menu" 
+               aria-labelledby="dropdownMenuButton">
+
+            <a class="dropdown-item" 
+               href="{{ url_for('blog.update', id=post['id']) }}">
+               Edit
+              </a>
+
+            </div>
+          </div>
+
+        {% endif %}
+
+      </div>
+    </header>
+
+    <h2>
+      <a href="{{ url_for('blog.viewPost', id=post['id']) }}">
+        {{ post['title'] }}
+        </a>
+      </h2>
+
+    <div class="about">
+      By 
+      <a href="{{ url_for('blog.profile', id=post['author_id']) }}">
+        {{ post['username'] }}</a>
+       - {{ post['created'].strftime('%d/%m/%y') }}
+      </div>
+
+    <p class="body">
+      {{ post['body'] }}
+      </p>
+
+  </article>
+
+  {% if not loop.last %}
+
+    <hr>
+  {% endif %}
+{% endfor %}
+  </div>
+
+  <div id="favourites" 
+       class="tab-pane fade-in">
+      <br>
+
+      {% if g.user['id'] == id %}
+        {% for favourite in favourites %}
+
+        <article class="post">
+          <header>
+            <div>
+
+              {% if g.user['id'] == favourite['author_id'] or g.user['admin'] == 1 %}
+
+              <div class="dropdown dropleft" 
+                   id="dropdown">
+
+                <button class="btn" 
+                        type="button" 
+                        id="dropdownMenuButton" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="false">
+
+                  <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
+
+                  </button>
+
+                <div class="dropdown-menu" 
+                     aria-labelledby="dropdownMenuButton">
+
+                  <a class="dropdown-item" 
+                     href="{{ url_for('blog.update', id=favourite['post_id']) }}">
+                     Edit
+                    </a>
+
+                  </div>
+
+                </div>
+              {% endif %}
+              </div>
+          </header>
+
+          <h2>
+            <a href="{{ url_for('blog.viewPost', id=favourite['post_id']) }}">
+              {{ favourite['title'] }}
+              </a>
+            </h2>
+
+          <div class="about">
+            By 
+            <a href="{{ url_for('blog.profile', id=favourite['author_id']) }}">
+              {{ favourite['username'] }}</a>
+             - {{ favourite['created'].strftime('%d/%m/%y') }}
+            </div>
+
+          <p class="body">
+            {{ favourite['body'] }}
+            </p>
+        </article>
+
+        {% if not loop.last %}
+          <hr>
+        {% endif %}
+      {% endfor %}
     {% endif %}
   </div>
 
-  {% if g.user['username'] == username %}
-  <br>
-  <form action="{{ url_for('blog.create') }}">
-    <button type="submit" class="btn btn-primary">New Post</button>  
-  </form>
-  {% endif %}
-{% endblock %}
-{% block content %}
-  {% for post in posts %}
-    <article class="post">
-      <header>
-        <div>
-          {% if g.user['id'] == post['author_id'] or g.user['admin'] == 1 %}
-          <div class="dropdown dropleft" id="dropdown">
-            <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-      </header>
-      <h2><a href="{{ url_for('blog.viewPost', id=post['id']) }}">{{ post['title'] }}</a></h2>
-      <div class="about">By <a href="{{ url_for('blog.profile', username=post['username']) }}">{{ post['username'] }}</a> - {{ post['created'].strftime('%d/%m/%y') }}</div>
-      <p class="body">{{ post['body'] }}</p>
-    </article>
-    {% if not loop.last %}
-      <hr>
+  <div id="profile" 
+       class="tab-pane fade">
+
+    {% if g.user['id'] == id %}
+
+    <form id="logout" 
+          action="{{ url_for('auth.logout') }}">
+
+      <button type="submit" 
+              class="btn btn-warning">
+              Logout
+        </button>  
+
+      </form>
+      
     {% endif %}
-  {% endfor %}
-  <br>
+  </div>
+</div>
 
 {% endblock %}
+
