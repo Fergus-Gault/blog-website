@@ -2,22 +2,54 @@
 
 {% block header %}
   <h1>
-    {% block title %}{{post['title']}}{% endblock %}
-    <div class="favourite">
 
-      {% if post['favourite']|int == 1 %}
-        <form method="POST" action="{{ url_for('blog.removeFavourite', id=post['id']) }}">
-          <button id="favButton" type="submit" class="btn btn-primary"><img src="/static/assets/heart-fill.svg" width="30" height="30"></button>  
-        </form>
-      {% elif post['favourite']|int == 0 %}
-        <form method="POST" action="{{ url_for('blog.addFavourite', id=post['id']) }}">
-          <button id="favButton" type="submit" class="btn btn-primary"><img src="/static/assets/heart.svg" width="30" height="30"></button>  
-        </form>
+    {% block title %}{{post['title']}}{% endblock %}
+
+    <div class="favourite">
+      
+    {% if g.user %}
+      {% if isFav == 1 %}
+        <form method="POST" 
+              action="{{ url_for('blog.removeFavourite', id=post['id']) }}">
+
+          <button id="favButton" 
+                  type="submit" 
+                  class="btn btn-primary">
+
+                  <img src="/static/assets/heart-fill.svg" 
+                       width="30" 
+                       height="30">
+
+            </button>  
+          </form>
+
+      {% elif isFav == 0 %}
+        <form method="POST" 
+              action="{{ url_for('blog.addFavourite', id=post['id']) }}">
+
+          <button id="favButton" 
+                  type="submit" 
+                  class="btn btn-primary">
+                  
+                  <img src="/static/assets/heart.svg" 
+                       width="30" 
+                       height="30">
+
+            </button>
+          </form>
+
       {% endif %}
-  
-  </div>
+    {% endif %}
+
+    </div>
   </h1>
-  <div class="about">By <a href="{{ url_for('blog.profile', username=post['username']) }}">{{ post['username'] }}</a> - {{ post['created'].strftime('%d/%m/%y') }}</div>
+
+  <div class="about">
+    By 
+    <a href="{{ url_for('blog.profile', id=post['author_id']) }}">
+      {{ post['username'] }}</a>
+     - {{ post['created'].strftime('%d/%m/%y') }}
+    </div>
 
 {% endblock %}
 {% block content %}
@@ -26,46 +58,108 @@
     <header>
       <div>
         {% if g.user['id'] == post['author_id'] or g.user['admin'] == 1 %}
-          <div class="dropdown dropleft" id="dropdown">
-            <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+          <div class="dropdown dropleft" 
+               id="dropdown">
+            <button class="btn" 
+                    type="button" 
+                    id="dropdownMenuButton" 
+                    data-toggle="dropdown" 
+                    aria-haspopup="true" 
+                    aria-expanded="false">
+
+              <img src="/static/assets/three-dots-vertical.svg" 
+                   alt="3 dots">
+
+              </button>
+
+            <div class="dropdown-menu" 
+                 aria-labelledby="dropdownMenuButton">
+
+              <a class="dropdown-item" 
+                 href="{{ url_for('blog.update', id=post['id']) }}">
+                 
+                 Edit
+                
+                </a>
+
             </div>
           </div>
+
           {% endif %}
-      </div>
-    </header>
-    <p class="body">{{ post['body'] }}</p>
+      
+        </div>
+      </header>
+
+    <p class="body">
+      {{ post['body'] }}
+    </p>
     </article>
     <hr>
-    <h4>Comments</h4>
+    <h4>
+      Comments
+    </h4>
+
     {% if g.user %}
+
     <form method="POST">
       <div class="form-group">
-          <textarea name="content" placeholder="Add comment..."
+          <textarea name="content" 
+                    placeholder="Add comment..."
                     class="form-control"></textarea>
-      </div>
+            
+      
+        </div>
+
       <div class="form-group">
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" 
+                  class="btn btn-primary">
+                  Submit
+            </button>
       </div>
   </form>
+
   {% endif %}
+  
   <div class="comment">
+
     {% for comment in comments %}
       {% if g.user['id'] == comment['author_id'] or g.user['admin'] == 1 %}
-        <div class="dropdown dropleft" id="dropdown">
-          <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="/static/assets/three-dots-vertical.svg" alt="3 dots">
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="{{ url_for('blog.deleteComment', commID=comment['commentID'], postID=post['id']) }}">Delete</a>
+
+        <div class="dropdown dropleft" 
+             id="dropdown">
+          <button class="btn" 
+                  type="button" 
+                  id="dropdownMenuButton" 
+                  data-toggle="dropdown" 
+                  aria-haspopup="true" 
+                  aria-expanded="false">
+
+            <img src="/static/assets/three-dots-vertical.svg" 
+                 alt="3 dots">
+
+            </button>
+          <div class="dropdown-menu" 
+               aria-labelledby="dropdownMenuButton">
+
+            <a class="dropdown-item" 
+               href="{{ url_for('blog.deleteComment', commID=comment['commentID'], postID=post['id']) }}">
+               Delete
+              </a>
+
+            </div>
           </div>
-        </div>
       {% endif %}
-    <div class="about">By <a href="{{ url_for('blog.profile', username=comment['username']) }}">{{ comment['username'] }}</a> - {{ comment['created'].strftime('%d/%m/%y') }}</div>
-    <div>{{ comment['body'] }}</div>
+    <div class="about">
+      By 
+      <a href="{{ url_for('blog.profile', id=comment['author_id']) }}">
+        {{ comment['username'] }}</a>
+       - {{ comment['created'].strftime('%d/%m/%y') }}
+      </div>
+
+    <div>
+      {{ comment['body'] }}
+      </div>
+      
     <br>
     {% endfor %}
     </div>
