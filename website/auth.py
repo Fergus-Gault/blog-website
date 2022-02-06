@@ -12,25 +12,33 @@ from website.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth') # Creates auth blueprint
 
+
+#Register function
 @bp.route('/register', methods=('GET', 'POST')) # Creates route to the register page
 def register():
-    if request.method == 'POST': # If form submitted
-        username = request.form['username'] # Get the username from the form
-        email = request.form['email'] # Gets the email from the form
-        password = request.form['password'] # Gets the password from the form
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
         
-        db = get_db() # Gets the database
-        error = None # No error
+        db = get_db()
+        error = None
 
-        #SHOULDN'T run as validation done client-side
+        #SHOULDN'T RUN as validation done client-side
         if not username:
-            error = 'Username is required.' # Sets error if no username
+            error = 'Username is required.'
+        elif len(username) < 3 or len(username) > 15:
+            error= 'Username must be between 3 and 15 characters long.'
         elif not email: 
-            error = 'Email is required.' # Sets error if no email
+            error = 'Email is required.'
+        elif ('@','.') not in email or len(email) < 5:
+            error = 'Invalid email.'
         elif not password:
-            error = 'Password is required.' # Sets error if no password
+            error = 'Password is required.'
+        elif len(password) < 6:
+            error = 'Password must be at least 6 characters.'
         
-        if error is None: # If there is no error
+        if error is None:
             try: # Tries to add data to table
                 db.execute(
                     "INSERT INTO user (id, username, email, password) VALUES (?,?,?,?)",
@@ -50,19 +58,20 @@ def register():
             else:
                 return redirect(url_for('blog.index')) # Retirects to index
         
-        flash(error, 'error') # Flashes error is there is oe
+        flash(error, 'error') # Flashes error is there is one
     
     return render_template('auth/register.html') # Renders the page
 
 
+# Login function
 @bp.route('/login', methods=('GET', 'POST')) # Creates route to the login page
 def login():
-    if request.method == 'POST': # If the form is submitted
-        username = request.form['username'] # Gets username from form
-        password = request.form['password'] # Gets password from form
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
         
-        db = get_db() # Gets database
-        error = None # Error is none
+        db = get_db()
+        error = None
 
         user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
@@ -73,7 +82,7 @@ def login():
         elif not check_password_hash(user['password'], password): # De-hashes password and checks
             error = 'Incorrect password.'
 
-        if error is None: # If no error
+        if error is None:
             session.clear() # Clears previous session
             session['user_id'] = user['id'] # Creates new session for the new user
             return redirect(url_for('index')) # Redirects to index
@@ -95,9 +104,10 @@ def load_logged_in_user():
         ).fetchone() # Sets g.user to logged in user
 
 
+# Logout function
 @bp.route('/logout') # Creates route to logout
 def logout():
-    session.clear() # Clears session
+    session.clear()
     return redirect(url_for('index')) # Redirects to index
 
 

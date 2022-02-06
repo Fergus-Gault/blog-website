@@ -10,8 +10,7 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
-#Gets the database connection
-def get_db():
+def get_db(): #Gets the database connection
     if 'db' not in g: # If not already connected, connect
         sqlite3.register_adapter(shortuuid.uuid, lambda u :u.bytes_le) # Registers the adapter to allow UUID's
         g.db = sqlite3.connect(
@@ -22,11 +21,13 @@ def get_db():
     
     return g.db
 
+
 def close_db(e=None): # Closes database
     db = g.pop('db', None) # Removes the database from g
 
     if db is not None:
         db.close() # Closes database connection
+
 
 def init_db():
     db = get_db()
@@ -40,15 +41,18 @@ def init_db():
         ) # Creates an admin account
     db.commit() # Commits changes to the database
 
+
 def make_admin(username): # Allows user to make an account admin (Command Line only)
     db = get_db()
     db.execute('UPDATE user SET admin=1, emailConfirmed=1 WHERE username = ?', (username,))
     db.commit()
 
+
 def remove_admin(username): # Allows the user to remove an account with admin (Command Line only)
     db = get_db()
     db.execute('UPDATE user SET admin=0, emailConfirmed=1 WHERE username = ?', (username,))
     db.commit()
+
 
 @click.command('init-db') # Creates a command to init-db
 @with_appcontext # Ensures the command is being ran within the website environment

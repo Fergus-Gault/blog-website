@@ -19,19 +19,19 @@ def index():
         'SELECT p.id, title, body, created, author_id, username'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
-    ).fetchall() # Selects all data from the 'post' table
+    ).fetchall()
     return render_template('blog/index.html', posts=posts) # Renders the page
 
 
 @bp.route('/create', methods=('GET', 'POST')) # Creates route for the create page
-@login_required # Requires login to create post
+@login_required
 def create():
-    if request.method == 'POST': # Checks if submit button pressed
-        title = request.form['title'] # Gets the title from the form
-        body = request.form['content'] # Gets the body from the form
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['content']
         error = None
 
-        if not title: # Throws error if no title
+        if not title:
             error = 'Title is required.'
         if error is not None:
             flash(error, 'error') # Flashes error
@@ -75,17 +75,17 @@ def get_favs(id): # Gets the favourite posts for the user
 
 
 @bp.route('/post/<string:id>/update', methods=('GET', 'POST')) # Creates route for updating post
-@login_required # Requires login
+@login_required
 def update(id):
     post = get_post(id) # Gets post and checks if user is author
     
-    if request.method == 'POST': # Checks if form is submitted
-        title = request.form['title'] # Gets the title
-        body = request.form['content'] # Gets the content
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['content']
         error = None
 
         if not title:
-            error = 'Title is required.' # Throws error if no title
+            error = 'Title is required.'
 
         if error is not None:
             flash(error, 'error') # Flashes error
@@ -104,7 +104,7 @@ def update(id):
 
 
 @bp.route('/<string:id>/delete', methods=("POST",)) # Creates route for deleting post
-@login_required # Requires login
+@login_required
 def delete(id):
     get_post(id) # Makes sure user is the author
     db = get_db()
@@ -139,7 +139,7 @@ def profile(id):
         ,(id,)).fetchall() # Gets all posts from user
 
     if g.user: # If profile is the current user
-        favourites = get_favs(id) # Gets favourites
+        favourites = get_favs(id)
     else:
         favourites=None
 
@@ -151,7 +151,7 @@ def viewPost(id):
     #SELECTS INFO FOR POST
     get_post(id, check_author=False) # Gets the post but doesn't check for author so anyone can view
 
-    db = get_db() # Gets database
+    db = get_db()
     
     post = db.execute(
         'SELECT p.id, title, body, created, author_id, username'
@@ -174,7 +174,7 @@ def viewPost(id):
         isFav=None
 
     #CODE FOR ADDING COMMENTS
-    if request.method == 'POST': # Checks if the comment has been submitted
+    if request.method == 'POST':
         body = request.form['content'] # Gets the content of the comment
         error = None
 
@@ -204,7 +204,7 @@ def viewPost(id):
     
 
 @bp.route('/<string:postID>/<string:commID>/deleteComment') # Creates route for deleting comment
-@login_required # Requires login
+@login_required
 def deleteComment(commID, postID):
     db = get_db()
     
@@ -217,11 +217,11 @@ def deleteComment(commID, postID):
 
 
 @bp.route('/post/<string:id>/addFavourite', methods=('POST',)) # Creates route for adding to favourite
-@login_required # Requires login
+@login_required
 def addFavourite(id):
     db = get_db()
 
-    if request.method == "POST": # Checks if button pressed
+    if request.method == "POST":
         db.execute(
             'INSERT INTO favourite (id, post_id, author_id)' 
             ' VALUES (?,?,?)',
@@ -235,11 +235,11 @@ def addFavourite(id):
 
 
 @bp.route('/post/<string:id>/removeFavourite', methods=('POST',)) # Creates route for removing favourite
-@login_required # Requires login
+@login_required
 def removeFavourite(id):
     db = get_db()
     
-    if request.method == "POST": # Checks if button pressed
+    if request.method == "POST":
         db.execute(
             'DELETE FROM favourite WHERE post_id=?',(id,)
         ) # Removes from favourite table

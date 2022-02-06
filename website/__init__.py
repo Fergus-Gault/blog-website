@@ -18,9 +18,10 @@ def internal_server_error(e):
 def create_app(test_config=None):
     # Create and configure app
     app = Flask(__name__, instance_relative_config=True) # Creates app
-    app.register_error_handler(404, page_not_found) # Registers error handler and calls function when error is found
-    app.register_error_handler(403, page_access_forbidden) # "                                                      "
-    app.register_error_handler(500, internal_server_error) # "                                                      "
+    # Registers error handlers and calls function when error is found
+    app.register_error_handler(404, page_not_found)
+    app.register_error_handler(403, page_access_forbidden)
+    app.register_error_handler(500, internal_server_error)
     
     app.config.from_mapping(
         SECRET_KEY='dev', # Secret key !!!CHANGE ON LAUNCH!!!
