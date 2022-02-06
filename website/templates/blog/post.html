@@ -6,8 +6,9 @@
     {% block title %}{{post['title']}}{% endblock %}
 
     <div class="favourite">
-      
+    
     {% if g.user %}
+      <!-- If the post is a favourite then show a filled heart and link to removeFavourite function-->
       {% if isFav == 1 %}
         <form method="POST" 
               action="{{ url_for('blog.removeFavourite', id=post['id']) }}">
@@ -22,7 +23,8 @@
 
             </button>  
           </form>
-
+      
+      <!-- Otherwise show an empty heart and link to addFacvourite function-->
       {% elif isFav == 0 %}
         <form method="POST" 
               action="{{ url_for('blog.addFavourite', id=post['id']) }}">
@@ -44,6 +46,7 @@
     </div>
   </h1>
 
+  <!-- Info section -->
   <div class="about">
     By 
     <a href="{{ url_for('blog.profile', id=post['author_id']) }}">
@@ -57,6 +60,7 @@
 <article class="viewPost">
     <header>
       <div>
+        <!-- If user is the author or is an admin then show dropdown menu-->
         {% if g.user['id'] == post['author_id'] or g.user['admin'] == 1 %}
           <div class="dropdown dropleft" 
                id="dropdown">
@@ -99,6 +103,7 @@
       Comments
     </h4>
 
+    <!-- Comment section if logged in -->
     {% if g.user %}
 
     <form method="POST">
@@ -122,6 +127,7 @@
   
   <div class="comment">
 
+    <!-- Checks each comment if user is admin or author and gives dropdown -->
     {% for comment in comments %}
       {% if g.user['id'] == comment['author_id'] or g.user['admin'] == 1 %}
 
@@ -149,6 +155,8 @@
             </div>
           </div>
       {% endif %}
+      
+    <!-- Info section-->
     <div class="about">
       By 
       <a href="{{ url_for('blog.profile', id=comment['author_id']) }}">

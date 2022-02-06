@@ -1,4 +1,7 @@
+<!-- Base file that is used for the templates -->
+
 <!DOCTYPE html>
+<!-- Creates a block called title that other templates can wrap a title within -->
 <title>
     {% block title %}{% endblock %} - Website
     </title>
@@ -11,6 +14,7 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
       crossorigin="anonymous">
 
+<!-- Navbar -->
 <nav class="navbar navbar-inverse navbar-expand-md navbar-light bg-light" 
      role="navigation">
 
@@ -27,6 +31,7 @@
                 </a>
           </div>
         <ul class="navbar-nav navbar-right me-auto mb-0 mc-lg-0">
+            <!-- If logged in then show profile picture -->
             {% if g.user %}
                 <li class="nav-item">
                     <a class="nav-link"
@@ -38,6 +43,7 @@
 
                         </a>
                 </li>
+            <!-- Otherwise show login -->
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" 
@@ -53,8 +59,10 @@
 </nav>
 <br>
 <div class="container">
+    <!-- Creates header block -->
     {% block header %}{% endblock %}
     <hr>
+    <!-- Loops through all errors and flashes them -->
     {% with errors = get_flashed_messages(category_filter=['error']) %}
         {% if errors %}
             {% for message in errors %}
@@ -78,7 +86,8 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
+    
+    <!-- Loops through all positive messages and flashes them -->
     {% with success = get_flashed_messages(category_filter=['message']) %}
         {% if success %}
             {% for message in success %}
@@ -103,8 +112,11 @@
         {% endif %}
     {% endwith %}
 
+    <!-- Creates content block -->
     {% block content %} {% endblock %}
 </div>
+
+<!-- Links to local files -->
 <script type="text/javascript" 
         src="/static/jquery/dist/jquery.min.js"></script>
 

@@ -8,10 +8,12 @@
 
 {% block content %}
 
+    <!-- Register form -->
     <form method="POST" 
           id="loginRegister" 
           validate>
 
+        <!-- Username field -->
         <div clas="form-group">
             <label for="username">
                 Username
@@ -22,6 +24,7 @@
                    required>
             </div>
 
+        <!-- Email field -->
         <div clas="form-group">
             <label for="email">
                 Email
@@ -34,6 +37,7 @@
                    required>
             </div>
 
+        <!-- Password field -->
         <div class="form-group">
             <label for="password">
                 Password
@@ -45,11 +49,13 @@
                    required>
         </div>
 
+        <!-- Register button -->
         <div class="form-group">
             <button type="submit" 
                     class="btn btn-primary">
                     Register
                 </button>
+            <!-- Link to login page -->
             <a href="{{ url_for('auth.login') }}" 
                id="loginRegister">
                Already have an account? Login

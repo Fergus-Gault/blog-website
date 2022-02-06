@@ -8,7 +8,9 @@
 {% endblock %}
 {% block content %}
 
+<!-- Tabs on profile page-->
 <ul class="nav nav-tabs">
+  <!-- Posts tab -->
   <li class="nav-item active">
     <a class="nav-link active" 
        data-toggle="tab" 
@@ -19,14 +21,16 @@
     </li>
 
   {% if g.user['id'] == id %}
-
+  <!-- If logged in then favourites tab -->
   <li class="nav-item">
     <a class="nav-link" 
        data-toggle="tab" 
        href="#favourites">
-       Favourites
+       Favourites 
       </a>
     </li>
+
+  <!-- If logged in then profile tab-->
   <li class="nav-item">
     <a class="nav-link" 
        data-toggle="tab" 
@@ -41,6 +45,7 @@
 
 <div class="tab-content">
 
+  <!-- If logged in then show New Post button -->
   <div id="posts" 
        class="tab-pane fade-in active">
 
@@ -61,6 +66,7 @@
   <br>
   {% for post in posts %}
   
+  <!-- Displays post -->
   <article class="post">
     <header>
       <div>
@@ -124,6 +130,7 @@
 {% endfor %}
   </div>
 
+  <!-- Displays favourites -->
   <div id="favourites" 
        class="tab-pane fade-in">
       <br>
@@ -135,6 +142,7 @@
           <header>
             <div>
 
+              <!-- If logged in or admin then show dropdown -->
               {% if g.user['id'] == favourite['author_id'] or g.user['admin'] == 1 %}
 
               <div class="dropdown dropleft" 
@@ -166,6 +174,7 @@
               </div>
           </header>
 
+          <!-- Post Body -->
           <h2>
             <a href="{{ url_for('blog.viewPost', id=favourite['post_id']) }}">
               {{ favourite['title'] }}
@@ -191,6 +200,7 @@
     {% endif %}
   </div>
 
+  <!-- If logged in then show logout button -->
   <div id="profile" 
        class="tab-pane fade">
 

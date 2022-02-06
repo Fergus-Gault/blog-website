@@ -5,6 +5,7 @@
     {% block title %}Posts{% endblock %}
     </h1>
 
+  <!-- If logged in then show create option -->
   {% if g.user %}
   <form action="{{ url_for('blog.create') }}">
     <button type="submit" 

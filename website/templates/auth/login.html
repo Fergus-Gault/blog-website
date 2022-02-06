@@ -7,9 +7,10 @@
 {% endblock %}
 
 {% block content %}
-
+    <!-- Form for logging in -->
     <form method="POST" id="loginRegister">
 
+        <!-- Username field -->
         <div clas="form-group">
             <label for="username">
                 Username
@@ -19,7 +20,8 @@
                    class="form-control" 
                    required>
             </div>
-
+        
+        <!-- Password field -->
         <div class="form-group">
             <label for="password">
                 Password
@@ -31,11 +33,13 @@
                    required>
             </div>
 
+        <!-- Login button -->
         <div class="form-group">
             <button type="submit" 
                     class="btn btn-primary">
                     Login
                 </button>
+            <!-- Link to register page -->
             <a href="{{ url_for('auth.register') }}" 
                id="loginRegister">
                Not registered? Register
