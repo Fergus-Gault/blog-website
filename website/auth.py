@@ -31,8 +31,12 @@ def register():
             error= 'Username must be between 3 and 15 characters long.'
         elif not email: 
             error = 'Email is required.'
+        elif len(email) < 3 or len(email) > 15:
+            error= 'Email must be between 3 and 15 characters long.'
         elif not password:
             error = 'Password is required.'
+        elif len(password) < 3 or len(password) > 24:
+            error= 'Password must be between 3 and 24 characters long.'
         
         if error is None:
             try: # Tries to add data to table

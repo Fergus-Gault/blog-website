@@ -33,6 +33,10 @@ def create():
 
         if not title:
             error = 'Title is required.'
+        if len(title) > 40:
+            error = 'Title must be less than 40 characters long.'
+        if len(body) > 500:
+            error = 'Body must be less than 500 characters long.'
         if error is not None:
             flash(error, 'error') # Flashes error
 
@@ -86,7 +90,10 @@ def update(id):
 
         if not title:
             error = 'Title is required.'
-
+        if len(title) > 40:
+            error = 'Title must be less than 40 characters long.'
+        if len(body) > 500:
+            error = 'Body must be less than 500 characters long.'
         if error is not None:
             flash(error, 'error') # Flashes error
         
@@ -180,7 +187,8 @@ def viewPost(id):
 
         if not body: # Prints error if no body
             error = 'Comment must contain text.'
-
+        if len(body) > 250:
+            error = 'Comment must be less than 250 characters long.'
         if error is not None:
             flash(error)
         
