@@ -1,0 +1,25 @@
+<!-- Error page for 404 errors -->
+{% extends 'base.html' %}
+
+{% block title %}
+405
+{% endblock %}
+
+{% block header %}
+  <h1>
+    {{error}}
+    </h1>
+{% endblock %}
+
+{% block content %}
+<h2>
+  Method not allowed
+    </h2>
+
+<br>
+
+<h3>
+  This method is not allowed.
+  </h3>
+
+{% endblock %}
