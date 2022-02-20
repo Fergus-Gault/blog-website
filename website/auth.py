@@ -31,12 +31,8 @@ def register():
             error= 'Username must be between 3 and 15 characters long.'
         elif not email: 
             error = 'Email is required.'
-        elif ('@','.') not in email or len(email) < 5:
-            error = 'Invalid email.'
         elif not password:
             error = 'Password is required.'
-        elif len(password) < 6:
-            error = 'Password must be at least 6 characters.'
         
         if error is None:
             try: # Tries to add data to table
@@ -56,6 +52,7 @@ def register():
                 elif "email" in str(e):
                     error = f'Email is already registered.'
             else:
+                flash('Account creation successful', 'message')
                 return redirect(url_for('blog.index')) # Retirects to index
         
         flash(error, 'error') # Flashes error is there is one
@@ -85,6 +82,7 @@ def login():
         if error is None:
             session.clear() # Clears previous session
             session['user_id'] = user['id'] # Creates new session for the new user
+            flash('Login successful', 'message')
             return redirect(url_for('index')) # Redirects to index
 
         flash(error, 'error') # Flashes error
