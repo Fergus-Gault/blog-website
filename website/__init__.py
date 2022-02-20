@@ -11,6 +11,10 @@ def page_not_found(e):
 def page_access_forbidden(e):
     return render_template('errors/403.html', error=e), 403
 
+#405 Error page
+def method_not_allowed(e):
+    return render_template('errors/405.html', error=e), 405
+
 #500 Error page
 def internal_server_error(e):
     return render_template('errors/500.html', error=e), 500
@@ -21,6 +25,7 @@ def create_app(test_config=None):
     # Registers error handlers and calls function when error is found
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(403, page_access_forbidden)
+    app.register_error_handler(405, method_not_allowed)
     app.register_error_handler(500, internal_server_error)
     
     app.config.from_mapping(
